@@ -1,9 +1,34 @@
+
 export const timer = (deadline) => {
-    const timerCountDays = document.querySelector('.timer__count_days')
-    const timerCountHours = document.querySelector('.timer__count_hours')
-    const timerCountMinutes = document.querySelector('.timer__count_minutes')
-    const timerWrapper = document.querySelector('.timer');
-    timerWrapper.setAttribute('data-timer-deadline', deadline);
+
+const timerTitle = document.createElement('p');
+timerTitle.classList.add('timer__title') ;
+timerTitle.textContent = 'До конца акции осталось:';   
+
+    const dayWrapper = document.createElement('p');
+    dayWrapper.classList.add('timer__item', 'timer__item_days');
+    const timerCountDays = document.createElement('span');
+    timerCountDays.classList.add('timer__count', 'timer__count_days');
+    const daysWord = document.createElement('span');
+    daysWord.classList.add('timer__units', 'timer__units_days');
+    dayWrapper.append(timerCountDays, daysWord);
+
+    const hourWrapper = document.createElement('p');
+    hourWrapper.classList.add('timer__item', 'timer__item_hours');
+    const timerCountHours = document.createElement('span');
+    timerCountHours.classList.add('timer__count', 'timer__count_hours');
+    const hoursWord = document.createElement('span');
+    hoursWord.classList.add('timer__units', 'timer__units_hours');
+    hourWrapper.append(timerCountHours, hoursWord);
+
+
+    const minutesWrapper = document.createElement('p');
+    minutesWrapper.classList.add('timer__item', 'timer__item_minutes');
+    const timerCountMinutes = document.createElement('span');
+    timerCountMinutes.classList.add('timer__count', 'timer__count_minutes');
+    const minutesWord = document.createElement('span');
+    minutesWord.classList.add('timer__units', 'timer__units_minutes');
+    minutesWrapper.append(timerCountMinutes, minutesWord);
 
     const secondWrapper = document.createElement('p');
     secondWrapper.classList.add('timer__item', 'timer__item_minutes');
@@ -12,6 +37,12 @@ export const timer = (deadline) => {
     const secondWord = document.createElement('span');
     secondWord.classList.add('timer__units');
     secondWrapper.append(timerCountSeconds, secondWord);
+
+    const timerWrapper = document.querySelector('.timer');
+    timerWrapper.setAttribute('data-timer-deadline', deadline);
+
+    timerWrapper.append(timerTitle, dayWrapper, hourWrapper, minutesWrapper);
+
 
     const getTimeRemaining = () => {
         const dateStop = new Date(deadline).getTime();
