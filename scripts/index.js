@@ -2,6 +2,7 @@ import {timer} from './modules/timer.js';
 import './modules/acc.js';
 import './modules/burger.js';
 import './modules/fly.js';
+import {renderInfo} from './modules/getData.js'
 
 
 
@@ -10,5 +11,5 @@ const init = () => {
     timer('2022/09/07 10:22:00+0300');
     } 
 }
-
+renderInfo('data.json');
 init();
