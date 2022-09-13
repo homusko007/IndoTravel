@@ -1,18 +1,55 @@
-const getData = async (data) => {
-    const result = await fetch(data);
-    const result2 = await result.json();
-    return result2;
-}
+import { openModalSucces, openModalError, closeModal } from './createFormMessage.js';
 
-export const renderInfo = async (data) => {
-    const result2 = await getData(data);
-    const formReservation = document.querySelector('.reservation__form');
+const fetchRequest = async (url, {
+    method = 'get',
+    callback,
+    body,
+    headers,
+}) => {
+    try {
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }
+
+        if (body) options.body = JSON.stringify(body);
+
+        const response = await fetch(url, options);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (callback) callback(null, data);
+            return;
+        }
+        throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+
+    } catch (err) {
+        callback(err);
+    }
+};
+
+export const getData = () => {
+    fetchRequest('data.json', {
+        method: 'get',
+        callback: renderInfo,
+    });
+};
+
+const formReservation = document.querySelector('.reservation__form');
+
+const renderInfo = (err, data) => {
+    if (err) {
+        formReservation.textContent = err;
+        return;
+    }
     const dates = formReservation.dates;
     const people = formReservation.people;
     const reservDate = document.querySelector('.reservation__data');
     const reservPrice = document.querySelector('.reservation__price');
 
-    const addDate = result2.map(item => {
+    const addDate = data.map(item => {
         const dateOption = document.createElement('option')
         dateOption.className = 'tour__option reservation__option';
         dateOption.value = item.date;
@@ -30,7 +67,7 @@ export const renderInfo = async (data) => {
             k[1].remove(); //очищаем select с количеством людей
         };
 
-        const newObj = result2.filter(el => el.date == text1);
+        const newObj = data.filter(el => el.date == text1);
 
         let list = [];
         const lowEnd = newObj[0].min;
@@ -47,7 +84,6 @@ export const renderInfo = async (data) => {
         };
 
         const price = newObj[0].price;
-        console.log(price);
 
         people.addEventListener('change', () => {
             reservDate.textContent = '';
@@ -83,10 +119,67 @@ export const renderInfo = async (data) => {
             reservDate.insertAdjacentText('afterbegin', getMounth(arr, text1) + ', ');
             reservDate.insertAdjacentText('beforeend', text2 + ' ' + getNoun(text2, 'человек', 'человека', 'человек'));
 
-            const reservPriceText =  `${Number(price) * text2}  &#8381;`;
+            const reservPriceText = `${Number(price) * text2}  &#8381;`;
             reservPrice.innerHTML = reservPriceText;
         });
     });
 }
 
+formReservation.addEventListener('submit', (e) => {
+    e.preventDefault();
 
+    fetchRequest('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: {
+            dates: formReservation.dates.value,
+            people: formReservation.people.value,
+            title: formReservation.name.value,
+            tel: formReservation.tel.value,
+        },
+        callback(err, data) {
+            if (err) {
+                console.log(err, data);
+                openModalError();
+                closeModal();
+            } else {
+                openModalSucces();
+                closeModal();
+            }
+        },
+        headers: { 'Content-Type': 'applicstion/json' },
+    });
+   formReservation.reset();
+    document.querySelector('.reservation__data').textContent = "";
+    document.querySelector('.reservation__price').textContent = "";
+});
+
+const footerForm = document.querySelector('.footer__form');
+
+footerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    fetchRequest('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: {
+            email: footerForm.email.value,
+        },
+        headers: { 'Content-Type': 'applicstion/json' },
+        callback(err, data) {
+            if (err) {
+                console.log(err, data);
+                footerForm.textContent = err;
+            } else {
+                footerForm.textContent = ''
+                const message = document.createElement('p');
+                message.classList.add('footer__form-title');
+                message.textContent = 'Ваша заявка успешно отправлена';
+
+                const message2 = document.createElement('p');
+                message2.classList.add('footer__text');
+                message2.textContent = 'Наши менеджеры свяжутся с вами в течении 3-х дней';
+                message2.style.border = "3px solid red";
+                footerForm.append(message, message2);
+            }
+        },
+    });
+});  

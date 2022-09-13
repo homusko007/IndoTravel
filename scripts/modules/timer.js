@@ -60,7 +60,7 @@ timerTitle.textContent = 'До конца акции осталось:';
     const start = () => {
         const timer = getTimeRemaining();
 
-        const getNoun = (number, one, two, five) => {
+    const getNoun = (number, one, two, five) => {
             let n = Math.abs(number);
             n %= 100;
             if (n >= 5 && n <= 20) {
