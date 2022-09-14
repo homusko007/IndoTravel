@@ -32,8 +32,7 @@ overlay.addEventListener('click', (e) => {
     if (target === overlay ||
         target.classList.contains('form-success-btn') || 
         target.classList.contains('form-error-btn')) {
-            overlay.classList.add('hidden');
-            
+            overlay.remove();
     }
 });
 };
