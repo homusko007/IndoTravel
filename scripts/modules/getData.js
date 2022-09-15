@@ -157,6 +157,11 @@ formReservation.addEventListener('submit', async (e) => {
     formReservation.reset();
     document.querySelector('.reservation__data').textContent = "";
     document.querySelector('.reservation__price').textContent = "";
+    const inputs = formReservation.querySelectorAll('*[name]');
+    console.log(inputs);
+    inputs.forEach(el => {
+        el.setAttribute('disabled', 'disabled');
+    });
 }
 });
 
