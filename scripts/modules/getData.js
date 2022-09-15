@@ -1,4 +1,4 @@
-import { openModalSucces, openModalError, closeModal } from './createFormMessage.js';
+import { openModalInfo, openModalSucces, openModalError} from './createFormMessage.js';
 
 const fetchRequest = async (url, {
     method = 'get',
@@ -121,14 +121,21 @@ const renderInfo = (err, data) => {
 
             const reservPriceText = `${Number(price) * text2}  &#8381;`;
             reservPrice.innerHTML = reservPriceText;
-        });
-    });
-}
 
-formReservation.addEventListener('submit', (e) => {
+            });
+    });
+};
+
+formReservation.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    fetchRequest('https://jsonplaceholder.typicode.com/posts', {
+    const formData = new FormData(formReservation);
+    const newOrder = Object.fromEntries(formData);
+    newOrder['total'] = document.querySelector('.reservation__price').textContent;
+    const checkOrder = await openModalInfo(newOrder);
+   
+    if (checkOrder) {
+        fetchRequest('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: {
             dates: formReservation.dates.value,
@@ -139,18 +146,18 @@ formReservation.addEventListener('submit', (e) => {
         callback(err, data) {
             if (err) {
                 console.log(err, data);
-                openModalError();
-                closeModal();
+            openModalError();
+            
             } else {
-                openModalSucces();
-                closeModal();
+            openModalSucces();
             }
         },
-        headers: { 'Content-Type': 'applicstion/json' },
+        headers: { 'Content-Type': 'multipart/form-data' },
     });
-   formReservation.reset();
+    formReservation.reset();
     document.querySelector('.reservation__data').textContent = "";
     document.querySelector('.reservation__price').textContent = "";
+}
 });
 
 const footerForm = document.querySelector('.footer__form');
