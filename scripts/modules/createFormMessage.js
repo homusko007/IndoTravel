@@ -45,11 +45,9 @@ export const openModalInfo = async (data) => {
     order.addEventListener('click', () => {
     overlay.remove();
     resolve(true);
-
     });
 });
 }
-
 
 export const openModalSucces = async () => {
     await loadStyle('css/modal.css');
@@ -69,8 +67,7 @@ export const openModalSucces = async () => {
     btn.addEventListener('click', () => {
         overlaySucces.remove();
     });
-
-}
+};
 
 export const openModalError = async () => {
     await loadStyle('css/modal.css');
@@ -88,5 +85,4 @@ export const openModalError = async () => {
     btn.addEventListener('click', () => {
         overlayError.remove();
     });
-}
-
+};

@@ -1,4 +1,4 @@
-import { openModalInfo, openModalSucces, openModalError} from './createFormMessage.js';
+import { openModalInfo, openModalSucces, openModalError } from './createFormMessage.js';
 
 const fetchRequest = async (url, {
     method = 'get',
@@ -122,47 +122,49 @@ const renderInfo = (err, data) => {
             const reservPriceText = `${Number(price) * text2}  &#8381;`;
             reservPrice.innerHTML = reservPriceText;
 
-            });
+        });
     });
 };
 
 formReservation.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!formReservation.name.value.match(/^.+\s.+\s.+\s?$/g)) {
+        formReservation.name.value = 'Заполните ФИО';
+    } else {
+        const formData = new FormData(formReservation);
+        const newOrder = Object.fromEntries(formData);
+        newOrder['total'] = document.querySelector('.reservation__price').textContent;
+        const checkOrder = await openModalInfo(newOrder);
+        if (checkOrder) {
+            fetchRequest('https://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                body: {
+                    dates: formReservation.dates.value,
+                    people: formReservation.people.value,
+                    title: formReservation.name.value,
+                    tel: formReservation.tel.value,
+                },
+                callback(err, data) {
+                    if (err) {
+                        console.log(err, data);
+                        openModalError();
 
-    const formData = new FormData(formReservation);
-    const newOrder = Object.fromEntries(formData);
-    newOrder['total'] = document.querySelector('.reservation__price').textContent;
-    const checkOrder = await openModalInfo(newOrder);
-   
-    if (checkOrder) {
-        fetchRequest('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: {
-            dates: formReservation.dates.value,
-            people: formReservation.people.value,
-            title: formReservation.name.value,
-            tel: formReservation.tel.value,
-        },
-        callback(err, data) {
-            if (err) {
-                console.log(err, data);
-            openModalError();
-            
-            } else {
-            openModalSucces();
-            }
-        },
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    formReservation.reset();
-    document.querySelector('.reservation__data').textContent = "";
-    document.querySelector('.reservation__price').textContent = "";
-    const inputs = formReservation.querySelectorAll('*[name]');
-    console.log(inputs);
-    inputs.forEach(el => {
-        el.setAttribute('disabled', 'disabled');
-    });
-}
+                    } else {
+                        openModalSucces();
+                    }
+                },
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            formReservation.reset();
+            document.querySelector('.reservation__data').textContent = "";
+            document.querySelector('.reservation__price').textContent = "";
+
+            const inputs = formReservation.querySelectorAll('*[name]');
+            inputs.forEach(el => {
+                el.setAttribute('disabled', 'disabled');
+            });
+        }
+    }
 });
 
 const footerForm = document.querySelector('.footer__form');

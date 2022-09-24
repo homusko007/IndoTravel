@@ -1,4 +1,3 @@
-
 export const timer = (deadline) => {
 
 const timerTitle = document.createElement('p');
