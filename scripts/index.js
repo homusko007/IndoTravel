@@ -5,21 +5,31 @@ import './modules/fly.js';
 import { getData } from './modules/getData.js';
 import './modules/settingForm.js';
 
+ 
 const init = () => {
     /*if (document.body.contains(document.querySelector("*[data-timer-deadline]"))) {
         timer('2022/09/07 10:22:00+0300');
     }*/
 }
+new Swiper('.swiper', {
+    loop: true,
+    slidesPerView: 1,
+    autoplay: {
+        delay: 3000,
+    },
+  
+    navigation: {
+    nextEl: '.album__right',
+    prevEl: '.album__left',
+    },
 
-/*const form = document.querySelector('.reservation__form');
-const formName = form.name;
-formName.addEventListener('input', () => {
-    formName.value = formName.value.replace(/[^а-яё ]/i, '');
-}); 
-
-form.tel.addEventListener('input', () =>{
-    form.tel.value = form.tel.value.replace(/[^+\d]/i, '');
-});*/
+    breakpoints: {
+        1022: {
+            slidesPerView: 1,
+        }
+    }
+  
+});
 
 getData();
 init();
